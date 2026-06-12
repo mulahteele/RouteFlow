@@ -1,0 +1,88 @@
+# ============================================================
+# RouteFlow Configuration — AE latent shape 1×256
+# ============================================================
+ae_tag: "1x256"
+
+# --- Paths ---
+paths:
+  bb_file: data/raw/Enamine_Building_Blocks_US.csv
+  template_file: data/raw/rxn_templates.txt
+  processed_dir: data/processed
+  checkpoint_dir: checkpoints
+
+# --- Phase 0: Pre-computation ---
+precompute:
+  fp_radius: 2
+  fp_nbits: 2048
+
+# --- Phase 1: Data Construction ---
+data:
+  num_train_routes: 1000000
+  num_val_routes: 5000
+  num_test_routes: 5000
+  max_heavy_atoms: 80
+  seed: 42
+  reaction_ratio: {1: 0.3, 2: 0.3, 3: 0.2, 4: 0.1, 5: 0.1}
+  num_workers: 32
+
+# --- Phase 2: Route Autoencoder ---
+autoencoder:
+  embed_dim: 256
+  latent_dim: 256
+  encoder_num_layers: 6
+  encoder_nhead: 8
+  encoder_ff_dim: 1024
+  encoder_dropout: 0.1
+  decoder_num_layers: 8
+  decoder_nhead: 8
+  decoder_ff_dim: 1024
+  decoder_dropout: 0.1
+  decoder_max_len: 64
+  lr: 1.0e-4
+  weight_decay: 1.0e-5
+  epochs: 50
+  batch_size: 256
+  patience: 5
+  grad_clip: 1.0
+  seed: 42
+  noise_sigma_target: 0
+  noise_warmup_epochs: 12
+
+# --- Phase 3A: Flow Pre-training (CFM, zero oracle) ---
+flow_pretrain:
+  hidden_dim: 1024
+  num_layers: 6
+  time_embed_dim: 128
+  lr: 1.0e-4
+  weight_decay: 1.0e-5
+  epochs: 500
+  batch_size: 32
+  patience: 20
+  grad_clip: 1.0
+  seed: 42
+
+# --- Phase 3B: Online Reward-Weighted Fine-tuning (ORW-CFM-W2, 10K oracle) ---
+flow_finetune:
+  num_iterations: 200
+  samples_per_iter: 50
+  lr: 1.0e-4
+  warmup_steps: 500
+  w2_coefficient: 0.05
+  temperature_min: 1.0
+  temperature_max: 5.0
+  grad_clip: 1.0
+  batch_size: 100
+  train_steps_per_iter: 20
+  ode_steps: 30
+  replay_size: 500
+  seed: 42
+
+# --- Phase 4: Inference (zero oracle) ---
+inference:
+  num_samples: 100
+  ode_steps: 30
+  seed: 42
+
+# --- Oracle ---
+oracle:
+  name: GSK3B

@@ -1,0 +1,25 @@
+# Core
+# PyTorch: install separately to match your CUDA build, e.g.
+#   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+torch
+torchvision
+torchaudio
+
+# Cheminformatics (RDKit is best installed via conda: conda install -c conda-forge rdkit)
+# Note: SA score uses RDKit's bundled Contrib/SA_Score/sascorer.py — no separate
+# package; the code adds it to sys.path. The conda-forge build includes Contrib/.
+rdkit
+
+# Scientific stack
+numpy
+scipy
+scikit-learn
+pandas
+
+# Property oracles (Therapeutics Data Commons)
+PyTDC
+
+# Config & utilities
+pyyaml
+tqdm
+matplotlib
