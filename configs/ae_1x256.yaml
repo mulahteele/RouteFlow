@@ -22,7 +22,6 @@ data:
   num_test_routes: 5000
   max_heavy_atoms: 80
   seed: 42
-  reaction_ratio: {1: 0.3, 2: 0.3, 3: 0.2, 4: 0.1, 5: 0.1}
   num_workers: 32
 
 # --- Phase 2: Route Autoencoder ---

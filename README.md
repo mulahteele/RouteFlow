@@ -4,7 +4,7 @@
   <img src="route_latent.png" alt="RouteFlow overview" width="100%">
 </p>
 
-A Transformer **route autoencoder** embeds each synthesis route as a latent code; a **conditional flow-matching** model is pre-trained over that space and **fine-tuned online** against a property oracle, transporting latents toward high-reward, synthesizable molecules.
+A Transformer route autoencoder embeds each synthesis route as a latent code; a conditional flow-matching model is pre-trained over that space and fine-tuned online against a property oracle, transporting latents toward high-reward, synthesizable molecules.
 
 ---
 
@@ -83,19 +83,14 @@ Run in order from the repository root. (Each phase maps to one cluster job in th
 python scripts/build_compatibility.py --config configs/ae_1x256.yaml
 ```
 
-**Phase 2 — Route enumeration.** Enumerate routes and split into train/val/test.
+**Phase 2 — Route enumeration.** Enumerate routes, filter the val/test splits, and build the hard test set used by the Phase 3 evaluation.
 ```bash
 python scripts/enumerate_routes.py --config configs/ae_1x256.yaml
-```
-<details><summary>Optional evaluation splits</summary>
-
-```bash
-# Filtered val/test (SA < 2.5, QED > 0.5)
+# Filtered val / test_easy (SA < 2.5, QED > 0.5)
 python scripts/enumerate_routes.py --config configs/ae_1x256.yaml --val_test_only_filtered
 # Hard test set (SA > 3.5, QED > 0.5)
 python scripts/enumerate_routes.py --config configs/ae_1x256.yaml --hard_test_only
 ```
-</details>
 
 **Phase 3 — Route autoencoder.** Train (multi-GPU via `torchrun`; set `--nproc_per_node` to your GPU count), then evaluate.
 ```bash
